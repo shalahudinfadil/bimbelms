@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: bimbelms
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/bimbelms
+    username: postgres
+    password: 12345
