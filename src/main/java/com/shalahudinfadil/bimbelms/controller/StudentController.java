@@ -1,9 +1,7 @@
 package com.shalahudinfadil.bimbelms.controller;
 
 import com.shalahudinfadil.bimbelms.constant.ResponseCode;
-import com.shalahudinfadil.bimbelms.dto.GenericRequestDTO;
 import com.shalahudinfadil.bimbelms.dto.StudentDTO;
-import com.shalahudinfadil.bimbelms.entity.Student;
 import com.shalahudinfadil.bimbelms.response.GenericResponse;
 import com.shalahudinfadil.bimbelms.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/student")

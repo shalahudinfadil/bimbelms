@@ -1,5 +1,8 @@
 package com.shalahudinfadil.bimbelms.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum ResponseCode {
     SUCCESS("BMS-00-01", "Action Performed Successfully"),
     SAVED("BMS-00-02", "Item Saved"),
@@ -14,11 +17,4 @@ public enum ResponseCode {
         this.message = message;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }
