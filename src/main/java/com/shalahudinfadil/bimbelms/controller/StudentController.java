@@ -2,7 +2,7 @@ package com.shalahudinfadil.bimbelms.controller;
 
 import com.shalahudinfadil.bimbelms.constant.ResponseCode;
 import com.shalahudinfadil.bimbelms.dto.StudentDTO;
-import com.shalahudinfadil.bimbelms.response.GenericResponse;
+import com.shalahudinfadil.bimbelms.dto.response.GenericResponse;
 import com.shalahudinfadil.bimbelms.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
