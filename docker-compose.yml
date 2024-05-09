@@ -3,19 +3,27 @@ services:
   db:
     image: 'postgres:16.2-alpine'
     container_name: bimbelms-db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
     environment:
       - POSTGRES_USER=compose-postgres
       - POSTGRES_PASSWORD=compose-postgres
-  app:
+  app-core:
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dev.Dockerfile
+    develop:
+      watch:
+        - path: ./src
+          action: rebuild
     volumes:
       - ./:/app
       - ./.m2:/root/.m2
     working_dir: /app
     command: sh run.sh
-    container_name: bimbelms-app
+    container_name: bimbelms-app-core
     ports:
       - 8080:8080
       - 35729:35729
@@ -27,3 +35,5 @@ services:
       - SPRING_DATASOURCE_USERNAME=compose-postgres
       - SPRING_DATASOURCE_PASSWORD=compose-postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+volumes:
+  pgdata:

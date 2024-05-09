@@ -1,56 +1,74 @@
 package com.shalahudinfadil.bimbelms.controller;
 
 import com.shalahudinfadil.bimbelms.constant.ResponseCodeEnum;
-import com.shalahudinfadil.bimbelms.dto.request.create.StudentCreateDTO;
-import com.shalahudinfadil.bimbelms.dto.request.update.StudentUpdateDTO;
+import com.shalahudinfadil.bimbelms.dto.request.create.LookupCreateDTO;
+import com.shalahudinfadil.bimbelms.dto.request.update.LookupUpdateDTO;
 import com.shalahudinfadil.bimbelms.dto.response.GenericResponse;
-import com.shalahudinfadil.bimbelms.dto.response.StudentResponseDTO;
-import com.shalahudinfadil.bimbelms.service.StudentService;
+import com.shalahudinfadil.bimbelms.dto.response.LookupResponseDTO;
+import com.shalahudinfadil.bimbelms.service.LookupService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/api/v1/student")
-public class StudentController {
+@RequestMapping("api/v1/lookup")
+public class LookupController {
+    private final Logger logger = Logger.getLogger("LookupCOntroller");
     @Autowired
-    StudentService studentService;
-
+    LookupService lookupService;
+    
     @GetMapping("/list")
-    ResponseEntity<GenericResponse> getAll() {
-        return new ResponseEntity<>(new GenericResponse(ResponseCodeEnum.SUCCESS.getCode(), null, studentService.getAll()), HttpStatus.OK);
+    public ResponseEntity<GenericResponse> getAll() {
+        ArrayList<LookupResponseDTO> dtos = (ArrayList<LookupResponseDTO>) lookupService.getAll();
+        
+        return new ResponseEntity<>(new GenericResponse(ResponseCodeEnum.SUCCESS.getCode(), ResponseCodeEnum.SUCCESS.getMessage(), dtos), HttpStatus.OK);
     }
 
-    @PostMapping("/search")
-    ResponseEntity<GenericResponse> getById(@RequestBody Map<String, Object> request) {
-        StudentResponseDTO student = studentService.getById((String) request.get("id"));
+    @GetMapping("/search")
+    ResponseEntity<GenericResponse> getById(@RequestParam @NotNull @NotBlank String id) {
+        LookupResponseDTO dto = lookupService.getById(id);
 
-        if (student == null) {
+        if (dto == null) {
             return new ResponseEntity<>(new GenericResponse(
                     ResponseCodeEnum.NOT_FOUND.getCode(), ResponseCodeEnum.NOT_FOUND.getMessage(), null), HttpStatus.OK
             );
         }
 
         return new ResponseEntity<>(new GenericResponse(
-            ResponseCodeEnum.SUCCESS.getCode(), null, student), HttpStatus.OK
+                ResponseCodeEnum.SUCCESS.getCode(), null, dto), HttpStatus.OK
         );
 
     }
 
+    @PostMapping("/group")
+    ResponseEntity<GenericResponse> getByIGroup(@RequestParam @NotNull @NotBlank String group) {
+        List<LookupResponseDTO> dto = lookupService.getByGroup((String) group);
+
+        return new ResponseEntity<>(new GenericResponse(
+                ResponseCodeEnum.SUCCESS.getCode(), null, dto), HttpStatus.OK
+        );
+
+    }
+    
     @PostMapping("/save")
-    ResponseEntity<GenericResponse> save(@RequestBody @Valid StudentCreateDTO request) {
+    public ResponseEntity<GenericResponse> save(@RequestBody @Valid LookupCreateDTO request) {
         try {
-            StudentResponseDTO studentDTO = studentService.save(request);
+            logger.info(getClass().getName() + " | /api/v1/lookup/save => Incoming request : "+request.toString());
+            LookupResponseDTO dto = lookupService.save(request);
 
             return new ResponseEntity<>(
                     new GenericResponse(
                             ResponseCodeEnum.SAVED.getCode(),
-                            "Student saved",
-                            studentDTO
+                            "Lookup Saved",
+                            dto
                     ),
                     HttpStatus.CREATED
             );
@@ -67,13 +85,13 @@ public class StudentController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<GenericResponse> update(@Valid @RequestBody StudentUpdateDTO request) {
+    public ResponseEntity<GenericResponse> update(@RequestBody @Valid LookupUpdateDTO request) {
 
         try {
 
-            StudentResponseDTO studentDTO = studentService.update(request);
+            LookupResponseDTO dto = lookupService.update(request);
 
-            if (studentDTO == null) {
+            if (dto == null) {
                 return new ResponseEntity<>(
                         new GenericResponse(
                                 ResponseCodeEnum.NOT_FOUND.getCode(),
@@ -87,8 +105,8 @@ public class StudentController {
             return new ResponseEntity<>(
                     new GenericResponse(
                             ResponseCodeEnum.SAVED.getCode(),
-                            "Item Updated",
-                            studentDTO
+                            ResponseCodeEnum.SAVED.getMessage(),
+                            dto
                     ),
                     HttpStatus.OK
             );
@@ -104,31 +122,4 @@ public class StudentController {
             );
         }
     }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<GenericResponse> delete(@RequestBody Map<String, String> request) {
-        try {
-            studentService.softDelete(request.get("id"));
-
-            return new ResponseEntity<>(
-                    new GenericResponse(
-                            ResponseCodeEnum.SUCCESS.getCode(),
-                            ResponseCodeEnum.SUCCESS.getMessage(),
-                            null
-                    ),
-                    HttpStatus.OK
-            );
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    new GenericResponse(
-                            ResponseCodeEnum.GENERAL_ERROR.getCode(),
-                            ResponseCodeEnum.GENERAL_ERROR.getMessage(),
-                            e.getMessage()
-                    ),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
-
 }

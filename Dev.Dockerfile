@@ -61,21 +61,6 @@ WORKDIR /app
 COPY --from=deps /root/.m2/repository /root/.m2/repository
 COPY ./run.sh /run.sh
 
-RUN apk add inotify-tools
 RUN chmod +x /run.sh
 
 ENTRYPOINT ["/run.sh"]
-
-
-#FROM eclipse-temurin:21-jre-jammy AS release
-#
-#LABEL maintainer="kishieel"
-#WORKDIR /app
-#
-#COPY --from=build /app/target/app.jar /app/app.jar
-#
-#RUN addgroup --system app && adduser -S -s /bin/false -G app app
-#RUN chown -R app:app /app
-#
-#USER app
-#CMD ["java", "-jar", "app.jar"]
